@@ -1,7 +1,11 @@
 <template>
     <div id="igpic">
-        <input type="text" v-model="keyword"> <button type="button" @click="keyword" class="button">ค้นหา</button>
+        <form action='' method=''>
+        <input type="text" v-model="keyword" id="search"> 
+        <button type="submit"  class="button" onclick = "search()"><i class="fas fa-search"></i> ค้นหา</button>
+        </form>
         <h3 v-for="h in hashtag" :key="h.id">{{'#'+ h.name}}</h3>
+        <h4>{{keyword}}</h4>
               <!--<div v-for="c in ig" :key="c.id" style="list-style-type: none;  ">
                 <img class="pic" :src="c.node.display_url"> 
             </div> -->  
@@ -31,25 +35,26 @@ export default {
     },
     mounted() {
         this.load();
+        
     },
     methods:{
         load() {
-            axios.get('https://www.instagram.com/explore/tags/cats/?__a=1',null
-            )
+            axios.get('https://www.instagram.com/explore/tags/car/?__a=1',null)
             .then(result =>{
                 this.ig = result.data.graphql.hashtag.edge_hashtag_to_media.edges;
                 this.hashtag = result.data.graphql;
                 this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges;
-                   
-            }).each(function(index, value) {		
-	            $('#igpic container').append('<p> '+value.node.edge_media_to_caption.edges[0].node.text+'</p><small><i class="fas fa-heart"></i>  '+value.node.edge_liked_by.count+'&nbsp; <i class="fas fa-comment-alt"></i>  '+value.node.edge_media_to_comment.count+'</small>');
-	      		return index<100-1;
-			})
+            })
 
             .catch(error => {
                 console.log(error);
             });
+        },
+        search() {
+            var x = $('#search').val();
+        
         }
+        
     }
     
 }
@@ -98,8 +103,6 @@ export default {
                 display: block;
                 width: 100%;
                 height: 250px;
-                
-                
             }
             .overlay {
                 transition: .5s ease;
@@ -109,7 +112,7 @@ export default {
                 bottom: 0;
                 left: 0;
                 right: 0;
-                background-color: #008CBA;
+                background-color: rgb(245, 18, 86);
                 height: 100%;
   width: 100%;
             
