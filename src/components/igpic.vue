@@ -4,17 +4,19 @@
         <input type="text" v-model="keyword" id="search"> 
         <button type="submit"  class="button"><i class="fas fa-search"></i> ค้นหา</button>
         </form>
-        <h3 v-for="h in hashtag" :key="h.id">{{'#'+ h.name}}</h3>
+        <div v-for="p in profile" :key="p.id">
+            <img :src="p.profile_pic_url" style="border-radius: 50%;">
+        </div>
+        <h3 v-for="h in hashtag" :key="h.id">{{'# '+ h.name}}</h3>
         <h4 v-if="allPost">{{allpost +  " &nbsp; โพสต์"}} </h4> 
             <div class="container"  v-for="c in ig" :key="c.id">
                 <img :src="c.node.display_url" class="image">
                 <div class="overlay">
                     <div class="text"  >
-                            <div>{{like}} </div> &nbsp; <div><i class="fas fa-comment-alt"></i></div>
+                            <div>{{like}}</div> &nbsp; <div><i class="fas fa-comment-alt"></i></div>
                     </div>
                 </div>
             </div>
-        
     </div>
 </template>
 
@@ -29,12 +31,12 @@ export default {
           like: [],
           keyword:"",
           allpost:[],
-          allPost:false
+          allPost:false,
+          profile:[]
       }  
     },
     mounted() {
         this.load();
-        
     },
     methods:{
         load() {
@@ -44,7 +46,8 @@ export default {
                 this.hashtag = result.data.graphql;
                 this.allpost = result.data.graphql.hashtag.edge_hashtag_to_media.count;
                 this.allPost = true;
-                this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges.node.edge_liked_by.count;
+                // this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges.edge_liked_by.count;
+                this.profile =result.data.graphql;
             })
 
             .catch(error => {
@@ -54,10 +57,8 @@ export default {
         onSubmit(ev) {
             ev.preventDefault();
             this.load()
-        }
-        
+        }   
     }
-    
 }
 </script>
 
