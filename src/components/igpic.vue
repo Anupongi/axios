@@ -1,19 +1,16 @@
 <template>
     <div id="igpic">
-        <form action='' method=''>
+        <form @submit="onSubmit">
         <input type="text" v-model="keyword" id="search"> 
-        <button type="submit"  class="button" onclick = "search()"><i class="fas fa-search"></i> ค้นหา</button>
+        <button type="submit"  class="button"><i class="fas fa-search"></i> ค้นหา</button>
         </form>
         <h3 v-for="h in hashtag" :key="h.id">{{'#'+ h.name}}</h3>
-        <h4>{{keyword}}</h4>
-              <!--<div v-for="c in ig" :key="c.id" style="list-style-type: none;  ">
-                <img class="pic" :src="c.node.display_url"> 
-            </div> -->  
+        <h4 v-if="allPost">{{allpost +  " &nbsp; โพสต์"}} </h4> 
             <div class="container"  v-for="c in ig" :key="c.id">
                 <img :src="c.node.display_url" class="image">
                 <div class="overlay">
                     <div class="text"  >
-                       <small><i class="fas fa-heart"></i>  &nbsp; <i class="fas fa-comment-alt"></i></small>
+                            <div>{{like}} </div> &nbsp; <div><i class="fas fa-comment-alt"></i></div>
                     </div>
                 </div>
             </div>
@@ -29,8 +26,10 @@ export default {
       return{
           ig: [],
           hashtag: []  ,
-          like:[],
-          keyword:""
+          like: [],
+          keyword:"",
+          allpost:[],
+          allPost:false
       }  
     },
     mounted() {
@@ -39,20 +38,22 @@ export default {
     },
     methods:{
         load() {
-            axios.get('https://www.instagram.com/explore/tags/car/?__a=1',null)
+            axios.get('https://www.instagram.com/explore/tags/' + this.keyword + '/?__a=1',null)
             .then(result =>{
                 this.ig = result.data.graphql.hashtag.edge_hashtag_to_media.edges;
                 this.hashtag = result.data.graphql;
-                this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges;
+                this.allpost = result.data.graphql.hashtag.edge_hashtag_to_media.count;
+                this.allPost = true;
+                this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges.node.edge_liked_by.count;
             })
 
             .catch(error => {
                 console.log(error);
             });
         },
-        search() {
-            var x = $('#search').val();
-        
+        onSubmit(ev) {
+            ev.preventDefault();
+            this.load()
         }
         
     }
