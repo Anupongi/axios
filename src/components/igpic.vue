@@ -8,7 +8,8 @@
             <img :src="p.profile_pic_url" style="border-radius: 50%;">
         </div>
         <h3 v-for="h in hashtag" :key="h.id">{{'# '+ h.name}}</h3>
-        <h4 v-if="allPost">{{allpost +  " &nbsp; โพสต์"}} </h4> 
+        <h4 v-if="allPost">{{allpost +  " &nbsp; โพสต์"}} </h4>
+        <p v-if="poppost">โพสต์ยอดนิยม</p> 
             <div class="container"  v-for="c in ig" :key="c.id">
                 <img :src="c.node.display_url" class="image">
                 <div class="overlay">
@@ -32,7 +33,8 @@ export default {
           keyword:"",
           allpost:[],
           allPost:false,
-          profile:[]
+          profile:[],
+          poppost:false
       }  
     },
     mounted() {
@@ -42,10 +44,11 @@ export default {
         load() {
             axios.get('https://www.instagram.com/explore/tags/' + this.keyword + '/?__a=1',null)
             .then(result =>{
-                this.ig = result.data.graphql.hashtag.edge_hashtag_to_media.edges;
+                this.ig = result.data.graphql.hashtag.edge_hashtag_to_top_posts.edges;
                 this.hashtag = result.data.graphql;
                 this.allpost = result.data.graphql.hashtag.edge_hashtag_to_media.count;
                 this.allPost = true;
+                this.poppost =true;
                 // this.like = result.data.graphql.hashtag.edge_hashtag_to_media.edges.edge_liked_by.count;
                 this.profile =result.data.graphql;
             })
@@ -93,6 +96,10 @@ export default {
     h3{
         font-size: 30px;
     }
+    p{
+        margin-right: 75%;
+        font-size: 16px;
+    }
     
         .container {
             margin: 1.5%;
@@ -116,7 +123,7 @@ export default {
                 right: 0;
                 background-color: rgb(245, 18, 86);
                 height: 100%;
-  width: 100%;
+                width: 100%;
             
             }
             .overlay:hover {
